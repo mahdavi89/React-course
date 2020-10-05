@@ -44,16 +44,7 @@ const useStyles = makeStyles((theme) => ({
     
 }
 }));
-let post={
-  "id": 1,
-    "title": "Magna velit culpa tempor commodo sit elit esse consectetur elit incididunt cupidatat laborum officia proident. 1",
-    "author": "qui est sint",
-    "category": "Javascript",
-    "created": "2020-10-02T01:09:28.827Z",
-    "description": "Nisi anim magna elit nisi commodo irure officia ea consectetur veniam tempor aute. Adipisicing deserunt sint occaecat dolor. Cupidatat tempor dolor in consectetur consequat aliqua dolore. Non sint veniam in laborum voluptate voluptate elit laborum et cupidatat. Do eiusmod ex laborum esse mollit nisi ipsum.",
-    "body": "Non sunt nostrud fugiat labore ut officia elit. Elit aliqua duis enim est laborum nisi dolor consequat incididunt. Sunt ad ipsum dolore culpa dolore eiusmod adipisicing labore.",
-    "cover": "1.png"
-}
+
 export default function RecipeReviewCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
