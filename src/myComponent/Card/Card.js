@@ -10,16 +10,20 @@ import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+import { red,grey } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
+import * as data from '../data.json';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     maxWidth: 800,
   },
   media: {
@@ -37,43 +41,49 @@ const useStyles = makeStyles((theme) => ({
     transform: 'rotate(180deg)',
   },
   avatar: {
-    backgroundColor: red[500],
+    backgroundColor: grey[500],
   },
   classImage:{
     height:150,
-    
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: 200,
 }
 }));
+
+let posts=[];
+posts=(Object.values(data))[0];
 
 export default function RecipeReviewCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   let post=props.cards;
-  console.log("props",props)
+  let PostSelected=posts.filter((val,index)=>{return val.id==post})
+  let myPost=PostSelected[0];
   return (
     <Card className={classes.root}>
       <CardHeader
         avatar={
             <Avatar aria-label="recipe" className={classes.avatar}>
-              {post && post.author && post.author.substr(0,1)}
-              {/* {post.author.substr(0,1)} */}
+              {myPost.author.substr(0,1)}
             </Avatar>
           }
          
-          subheader={moment(post.created).format("dddd, MMMM Do YYYY")}
+          subheader={moment(myPost.created).format("dddd, MMMM Do YYYY")}
           titleTypographyProps={{ height:10, overflow: "hidden"}}
           title={
             <Typography  gutterBottom variant="subtitle1" component="subtitle1" >
-              {post.title}
+              {myPost.title}
             </Typography>
           }
     
       />
-      <img src={`./images/${post.cover}`} className={classes.classImage}/>
+      <img src={`./images/${myPost.cover}`} className={classes.classImage}/>
       <CardContent className={classes.CardContent}>
                     <Typography variant="body2" color="textSecondary" component="p">
-                      {post.description}
+                      {myPost.body}
                     </Typography>
                   </CardContent>
       <CardActions disableSpacing>

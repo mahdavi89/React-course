@@ -81,7 +81,7 @@ export default function BlogReact() {
             {post?(
                 <RecipeReviewCard  cards={post}  onBack={handleBackToList}/>
             ):(
-                <Album  cards={cards}  onSelectPost={(e)=>handleSelectPost}/>
+                <Album  cards={cards}  onSelectPost={handleSelectPost}/>
             )
 
             }

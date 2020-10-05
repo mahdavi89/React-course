@@ -55,6 +55,19 @@ const useStyles = makeStyles((theme) => ({
   classImage:{
      
       height:150,
+  },
+  TextTitle:{
+    whiteSpace:'nowrap',
+overflow:'hidden',
+textOverflow: 'ellipsis',
+display: 'inline-block',
+width:200,
+  },
+  TextContent:{
+    whiteSpace:'nowrap',
+overflow:'hidden',
+textOverflow: 'ellipsis',
+width:250,
   }
 }));
 
@@ -77,22 +90,22 @@ export default function Album(props) {
                     }
                    
                     subheader={moment(card.created).format("dddd, MMMM Do YYYY")}
-                    titleTypographyProps={{ height:10, overflow: "hidden"}}
+                    // titleTypographyProps={{ height:10, overflow: "hidden"}}
                     title={
-                      <Typography  gutterBottom variant="subtitle1" component="subtitle1" >
+                      <Typography  gutterBottom variant="subtitle1" component="subtitle1" className={classes.TextTitle} >
                         {card.title}
                       </Typography>
                     }
                     
-                  />
+                  /> {console.log(card.id)}
                  <img src={`./images/${card.cover}`} className={classes.classImage}/>
                   <CardContent className={classes.CardContent}>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.TextContent}>
                       {card.description}
                     </Typography>
                   </CardContent>
                   <CardActions disableSpacing className={classes.CardActions}>
-                  <Button size="small" color="primary" onClick={props.onSelectPost(card.id)} >
+                  <Button size="small" color="primary" onClick={()=>props.onSelectPost(card.id)} >
                                   Read More
                                 </Button>
                    
