@@ -62,13 +62,36 @@ overflow:'hidden',
 textOverflow: 'ellipsis',
 display: 'inline-block',
 width:200,
+
   },
-  TextContent:{
-    whiteSpace:'nowrap',
-overflow:'hidden',
-textOverflow: 'ellipsis',
-width:250,
+ 
+
+  listItem: {
+    maxWidth: "20rem",
+    overflow: "hidden",
+    position: "relative",
+    lineHeight: "1.5em",
+    maxHeight: "7.4em",
+    textAlign: "justify",
+    marginRight: "-1em",
+    paddingRight: "1em",
+    
+    "&&:before": {
+      content: '"..."',
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+    },
+    "&&:after": {
+      content: '""',
+      position: "absolute",
+      right: 0,
+      width: "1em",
+      height: "1em",
+      marginTop: "0.2em",
+    }
   }
+
 }));
 
 export default function Album(props) {
@@ -100,7 +123,7 @@ export default function Album(props) {
                   /> {console.log(card.id)}
                  <img src={`./images/${card.cover}`} className={classes.classImage}/>
                   <CardContent className={classes.CardContent}>
-                    <Typography variant="body2" color="textSecondary" component="p" className={classes.TextContent}>
+                    <Typography variant="body2" color="textSecondary" component="p" className={classes.listItem}>
                       {card.description}
                     </Typography>
                   </CardContent>
