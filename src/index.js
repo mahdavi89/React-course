@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Parent from './formValidate';
+import ErrorBounary from './formValidate/Errorboundary';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ErrorBounary>
+    <Parent />
+    </ErrorBounary>
   </React.StrictMode>,
   document.getElementById('root')
 );
