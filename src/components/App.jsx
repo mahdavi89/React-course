@@ -7,10 +7,12 @@ import Signin from "pages/Signin";
 import Signup from "pages/Signup";
 import Main from "components/Main";
 import "react-toastify/dist/ReactToastify.css";
+import ServiceProvider from "providers/ServiceProvider/Service.Provider";
 
 export default function App() {
   return (
     <AuthProvider>
+      <ServiceProvider>
       <CssBaseline />
       <ToastContainer />
       <Router>
@@ -20,6 +22,7 @@ export default function App() {
           <Route component={Main} />
         </Switch>
       </Router>
+      </ServiceProvider>
     </AuthProvider>
   );
 }

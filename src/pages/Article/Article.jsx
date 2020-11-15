@@ -20,6 +20,8 @@ import Button from '@material-ui/core/Button';
 import { useParams } from 'react-router-dom';
 import { ArticleService } from 'components/Article';
 import { Link as RouterLink, Route } from "react-router-dom";
+import useService from 'providers/ServiceProvider/Service.hook';
+import { ArrowBack } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -65,75 +67,56 @@ export default function Article(props) {
     let newUsersState = [];
 
     useEffect(() => {
-        ArticleService.getAll().on("value", snapshot => {
-            if (snapshot && snapshot.exists()) {
-                snapshot.forEach(data => {
-                    const dataVal = data.val()
-
-                    newUsersState.push({
-                        key: data.key,
-                        title: dataVal.title,
-                        body: dataVal.body,
-                        lastModifiedDate: dataVal.lastModifiedDate,
-                        url: dataVal.url
-                    })
-
-                })
-                setArticle(newUsersState)
-            }
-        })
-
-    }, [])
-
-    let PostSelected = [];
-    if (article) {
-        console.log('artic', article)
-        PostSelected = article.filter((val, index) => { return val.key == param.id })
+       
+          ArticleService.getAll().child(param.id).on("value",snapshot=>{
+       
+             const dataVal=snapshot.val()
+             newUsersState.push({
+                                    key: snapshot.key,
+                                    title: dataVal.title,
+                                    body: dataVal.body,
+                                    lastModifiedDate: dataVal.lastModifiedDate,
+                                    url: dataVal.url
+                                })
+              setArticle(newUsersState)
+          })
 
 
-    }
+     }, [])
+ 
 
-    let card = PostSelected[0];
-    console.log('PostSelected[0]', PostSelected[0])
-    console.log('card', card)
-    if (card) {
+    let card = article[0];
+    console.log('card',article)
+    console.log('card',card)
         return (
 
             <Card className={classes.root}>
-                {console.log('cardddd', card.lastModifiedDate)}
                 <CardHeader
 
-                    subheader={moment(card.lastModifiedDate).format("dddd, MMMM Do YYYY,hh:mm:ss a")}
+                    subheader={moment(card&&card.lastModifiedDate).format("dddd, MMMM Do YYYY,hh:mm:ss a")}
                     titleTypographyProps={{ height: 10, overflow: "hidden" }}
                     title={
                         <Typography gutterBottom variant="subtitle1" component="subtitle1" >
-                            {card.title}
+                            {card&&card.title}
                         </Typography>
                     }
 
                 />
-                <img src={card.url} className={classes.classImage} />
+                <img src={card&&card.url} className={classes.classImage} />
                 <CardContent className={classes.CardContent}>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {card.body}
+                        {card&&<div dangerouslySetInnerHTML={{ __html: card.body }}></div>}
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
-                    <Button className={classes.btn} variant="contained" component={RouterLink} to="/articles">
-                        Back To List
-                  </Button>
-                  <Button className={classes.btn} variant="contained" component={RouterLink} to="/articles">
-                        Edit
-                  </Button>
-                  <Button className={classes.btn} variant="contained" component={RouterLink} to="/articles">
-                        delete
-                  </Button>
+                  
+                  <Button variant="contained" color="primary" component={RouterLink} to="/articles" startIcon={<ArrowBack />}>
+                    بازگشت به لیست
+                    </Button>
                 </CardActions>
 
             </Card>
         );
-    }
-    return (
-        <></>
-    )
+  //  }
+   
 }

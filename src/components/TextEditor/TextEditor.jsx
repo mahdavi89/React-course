@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { EditorState, convertToRaw, convertFromHTML, convertFromRaw } from "draft-js";
+import React, { useEffect, useState } from "react";
+import { EditorState, convertToRaw, convertFromHTML, convertFromRaw, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { makeStyles } from "@material-ui/core";
 import {grey} from "@material-ui/core/colors";
+import htmlToDraft from "html-to-draftjs";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,8 +27,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 const TextEditor = React.forwardRef((props, ref) => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(EditorState.createWithContent(
+    ContentState.createFromBlockArray(
+      htmlToDraft(props.value)
+    )
+  ));
   const classes = useStyles();
+
   const onEditorStateChange = editorState => {
     setEditorState(editorState);
 
@@ -41,6 +47,7 @@ const TextEditor = React.forwardRef((props, ref) => {
     
     console.log('props',props)
     return props.onChange(
+  
       draftToHtml(convertToRaw(editorState.getCurrentContent()))
       
     );

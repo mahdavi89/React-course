@@ -10,7 +10,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import Avatar from '@material-ui/core/Avatar';
@@ -21,7 +21,12 @@ import htmlToDraft from 'html-to-draftjs';
 import { EditorState, ContentState, convertToRaw } from 'draft-js';
 import { Link as RouterLink, Route } from "react-router-dom";
 import Article from 'pages/Article'
-import { customChunkRenderer } from 'components/TextEditor/DraftHelper';
+import useService from 'providers/ServiceProvider/Service.hook';
+import Loading from 'pages/Loading/Loading';
+import DeleteIcon from '@material-ui/icons/Delete'
+import { ArrowBack, Assignment, Create } from '@material-ui/icons';
+import { yellow } from '@material-ui/core/colors';
+// import { jsx, css } from '@emotion/core';
 
 
 
@@ -49,40 +54,53 @@ const useStyles = makeStyles(theme => ({
     WebkitBoxOrient: "vertical",
     overflow: "hidden"
   },
-  cardGrid:{
-    marginTop:'10px'
+  cardGrid: {
+    marginTop: '10px'
+  },
+  btnColor:{
+    backgroundColor:yellow[700],
+    "&:hover": {
+      backgroundColor: yellow[650],
+     
+  }
   }
 }));
 
+
+
 export default function Articles(props) {
   const classes = useStyles();
-  const [article, setArticle] = useState([]);
-  let newUsersState = [];
- 
+  const { article, getAll } = useService();
+
+  const { deleteArticle } = useService();
+  //const [article, setArticle] = useState([]);
+  // let newUsersState = [];
+
   useEffect(() => {
-    ArticleService.getAll().on("value", snapshot => {
-      if (snapshot && snapshot.exists()) {
-        snapshot.forEach(data => {
-          const dataVal = data.val()
+    getAll()
+    // ArticleService.getAll().on("value", snapshot => {
+    //   if (snapshot && snapshot.exists()) {
+    //     snapshot.forEach(data => {
+    //       const dataVal = data.val()
 
-          newUsersState.push({
-            key: data.key,
-            title: dataVal.title,
-            body: dataVal.body,
-            lastModifiedDate: dataVal.lastModifiedDate,
-            url: dataVal.url
-          })
+    //       newUsersState.push({
+    //         key: data.key,
+    //         title: dataVal.title,
+    //         body: dataVal.body,
+    //         lastModifiedDate: dataVal.lastModifiedDate,
+    //         url: dataVal.url
+    //       })
 
-        })
-        setArticle(newUsersState)
-      }
-    })
+    //     })
+    //     setArticle(newUsersState)
+    //   }
+    // })
 
   }, [])
-
+  console.log('article', article)
   return (
 
-    <React.Fragment>
+    article ? (<React.Fragment>
       <Container className={classes.cardGrid} maxWidth="md">
 
         <Grid container spacing={4}>
@@ -107,15 +125,24 @@ export default function Articles(props) {
                     component="p"
                     className={classes.description}
                   >
-                    {card.body}
-                    {/* dangerouslySetInnerHTML={{ __html: card.body }} */}
+
+                    <div dangerouslySetInnerHTML={{ __html: card.body }}>
+                    </div>
                   </Typography>
                 </CardContent>
-                <CardActions disableSpacing className={classes.CardActions}>
-                  <Button variant="contained" component={RouterLink} to={`/articles/${card.key}`}>
-                    Read More...
+                <CardActions >
+
+                  <Button variant="contained" color="primary" component={RouterLink} to={`/articles/${card.key}`} startIcon={<ArrowBack />}>
+                    ادامه
+                    </Button>
+
+                    <Button className={classes.btnColor} variant="contained" component={RouterLink} to={`/articles/edit/${card && card.key}`} startIcon={<Create />}>
+                      ویرایش
                   </Button>
 
+                  <Button  color="secondary" variant="contained" onClick={() => deleteArticle(card)} startIcon={<DeleteIcon />}>
+                    حذف
+                  </Button>
 
                 </CardActions>
               </Card>
@@ -123,7 +150,9 @@ export default function Articles(props) {
           )))}
         </Grid>
       </Container>
-    </React.Fragment>
+    </React.Fragment>) : (<Loading />)
+
+
   );
 
 }

@@ -41,7 +41,7 @@ class ArticleService {
  
     const key= db.push(article).key;
     const uploadImg=storage.child(key).child(article.image[0].name).put(article.image[0]);
-    uploadImg.then(uploadTaskImg=>{console.log('up',uploadTaskImg)
+    uploadImg.then(uploadTaskImg=>{
       this.updateTime=uploadTaskImg.metadata.timeCreated;
       return uploadTaskImg.ref.getDownloadURL()
       
@@ -54,6 +54,8 @@ class ArticleService {
      })
     }).then(()=>{
       toast.success("Done")
+    }).catch(()=>{
+      toast.error('error')
     })
     
   }
