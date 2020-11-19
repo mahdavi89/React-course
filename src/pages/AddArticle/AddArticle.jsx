@@ -59,6 +59,7 @@ export default function AddArticle() {
     console.log('artimg',article.image[0])
     create(article);
     console.log('afterCreateloading',loading)
+ 
   };
  
 console.log('file',file)

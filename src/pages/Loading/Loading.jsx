@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   height:'150px',
   width:'30%',
   left:'30%',
+  zIndex:999
  },
 
 

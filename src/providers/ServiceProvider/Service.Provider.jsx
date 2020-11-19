@@ -12,21 +12,24 @@ export const ServiceContext=React.createContext()
 export default function ServiceProvider({children}) {
     const [article,setArticle]=useState()
     const[loading,setLoading]=useState(false);
-    const [post, setPost] = useState([]);
-    const [fileVal, setFileVal] = useState([]);
+    // const [post, setPost] = useState();
+    // const [fileVal, setFileVal] = useState([]);
   //  const [files,setFiles]=useState({lastModified:'', name: '', size: '',type:''})
-  let files={lastModified:'', name: '', size: '',type:''}
-    let newUsersState = [];
-    let childArticle=[];
+
+  let Articles = [];
+  let childArticle=[];
+
     let  updateTime='';
 
     const getAll=()=>{
+     
+      Articles.splice(0, Articles.length)
         db.on("value", snapshot => {
             if (snapshot && snapshot.exists()) {
               snapshot.forEach(data => {
                 const dataVal = data.val()
       
-                newUsersState.push({
+                Articles.push({
                   key: data.key,
                   title: dataVal.title,
                   body: dataVal.body,
@@ -35,11 +38,11 @@ export default function ServiceProvider({children}) {
                 })
       
               })
-              setArticle(newUsersState)
+              setArticle(Articles);
             }
           })
         
-    } 
+    } ;
 
    const create=(postCreate)=>{
     setLoading(true)
@@ -58,42 +61,66 @@ export default function ServiceProvider({children}) {
          })
         }).then(()=>{
             setLoading(false);
-          toast.success("Done")
+          toast.success("پست جدید با موفقیت درج شد");
+       //  getAll();
         }).catch(()=>{
             //setLoading(true)
-          toast.error('error')
+          toast.error('خطا در انجام عملیات');
           setLoading(false);
         })
-    }
+    };
 
     const update=(newPost,exPost)=>{
-      console.log('expost',exPost)
-      console.log('newPost',newPost)
-      const deleted= firebase.storage.refFromURL(exPost.url);
-      deleted.delete().then((del)=>{console.log('del',del)
-        const uploadImg=storage.child(exPost.key).child(newPost.image[0].name).put(newPost.image[0]);
-        return uploadImg
-      }).then(uploadTaskImg=>{console.log('uploadTaskImg',uploadTaskImg)
-        updateTime=uploadTaskImg.metadata.timeCreated;
-       return uploadTaskImg.ref.getDownloadURL()
-       
-      })
-      .then(url=>{console.log('url',url)
-      return db.child(exPost.key).update({
+   setLoading(true);
+      if(!(!!(newPost.image[0]))){
+        console.log('newposttt',newPost)
+        console.log('exPost',exPost)
+        return db.child(exPost.key).update({
           "title":newPost.title,
           "body":newPost.body,
-        "lastModifiedDate":updateTime,
-         "url" : url,
-     })
-    }).then(()=>{
-       // setLoading(false);
-      toast.success("Done")
-    }).catch(()=>{
-       // setLoading(true)
-      toast.error('error')
-     // setLoading(false);
-    })
-    }
+          "lastModifiedDate":new Date(),
+          "url" : exPost.url,
+     }).then(()=>{
+     setLoading(false);
+     toast.success(" ویرایش با موفقیت انجام شد");
+ //    getAll();
+   }).catch(()=>{
+      //setLoading(true)
+     toast.error('خطا در انجام عملیات')
+    setLoading(false);
+   })
+      }
+      else{
+        console.log('newpostttelse',newPost)
+        console.log('exPostelse',exPost)
+        const deleted= firebase.storage.refFromURL(exPost.url);
+        deleted.delete().then((del)=>{
+          const uploadImg=storage.child(exPost.key).child(newPost.image[0].name).put(newPost.image[0]);
+          return uploadImg
+        }).then(uploadTaskImg=>{
+     
+         return uploadTaskImg.ref.getDownloadURL()
+         
+        })
+        .then(url=>{console.log('url',url)
+        return db.child(exPost.key).update({
+            "title":newPost.title,
+            "body":newPost.body,
+            "lastModifiedDate":new Date(),
+           "url" : url,
+       })
+      })  .then(()=>{
+         setLoading(false);
+        toast.success(" ویرایش با موفقیت انجام شد");
+      //  getAll();
+      }).catch(()=>{
+         // setLoading(true)
+        toast.error('خطا در انجام عملیات')
+      setLoading(false);
+      })
+      }
+ 
+    };
 
 
     const deleteArticle=(card)=>{
@@ -104,60 +131,65 @@ export default function ServiceProvider({children}) {
         return deletedArticle
       }).then(()=>{
         // setLoading(false);
-       toast.success("Done");
+       toast.success("عملبات حذف با موفقیت انجام شد");
+   // getAll();
         
      }).catch(()=>{
         // setLoading(true)
-       toast.error('error')
+       toast.error('خطا در انجام عملیات')
       // setLoading(false);
      })
     }
-
+;
     
-    const getImage=(url)=>{console.log('kk',url);
-    const dataVal=firebase.storage.refFromURL(url).fullPath;
+//     const getImage=(url)=>{console.log('kk',url);
+//     const dataVal=firebase.storage.refFromURL(url).fullPath;
   
-     return storage.child(dataVal).getMetadata().then((res)=>{
-        console.log('img',res.name);
-        var dateTime=moment(res.updated).unix();
+//      return storage.child(dataVal).getMetadata().then((res)=>{
+//         console.log('img',res.name);
+//         var dateTime=moment(res.updated).unix();
         
-        const FileList = [];
-        FileList.push({file:{
-         lastModified:dateTime,
-          name:res.name,
-          size:res.size,
-         type:res.contentType,}
-        })
-        console.log('fileimg',FileList)
-        return FileList;
+//         const FileList = [];
+//         FileList.push({file:{
+//          lastModified:dateTime,
+//           name:res.name,
+//           size:res.size,
+//          type:res.contentType,}
+//         })
+//         console.log('fileimg',FileList)
+//         return FileList;
       
      
-      })
+//       })
      
-    }
+//     };
 
-const getChild=(id)=>{
-  console.log('getchil',id)
-  setLoading(true)
-  db.child(id).on("value", snapshot => {
-    if (snapshot && snapshot.exists()) {
-    const dataVal = snapshot.val()
-    childArticle.push({
-        key: snapshot.key,
-        title: dataVal.title,
-        body: dataVal.body,
-        lastModifiedDate: dataVal.lastModifiedDate,
-        url: dataVal.url
-    })
-    console.log('childArticle',childArticle)
-    console.log('postServise',post)
-    setPost(childArticle)
-    setLoading(false);
+// const getChild=(id)=>{
+//   setLoading(true);
+// childArticle.splice(0,childArticle.length)
+ 
+//   console.log('getchil',id)
+ 
+//   db.child(id).on("value", snapshot => {
+//     if (snapshot && snapshot.exists()) {
+//     const dataVal = snapshot.val()
+//     childArticle.push({
+//         key: snapshot.key,
+//         title: dataVal.title,
+//         body: dataVal.body,
+//         lastModifiedDate: dataVal.lastModifiedDate,
+//         url: dataVal.url
+//     })
+  
+//     setPost(childArticle)
+//     setLoading(false);
+//     console.log('childArticle',childArticle)
+//     console.log('postServise',post)
     
-  }
+//   }
 
-})
-}
+// })
+// }
 
 
   //     const toDataURL = url => fetch(url)
@@ -233,7 +265,7 @@ const getChild=(id)=>{
 
   // }
 
-    const value=React.useMemo(()=>({article,getAll,create,loading,update,deleteArticle,getImage,getChild,post,loading}))
+    const value=React.useMemo(()=>({article,getAll,create,update,deleteArticle,loading}))
     return (
     <ServiceContext.Provider value={value}>{children}</ServiceContext.Provider>
     )

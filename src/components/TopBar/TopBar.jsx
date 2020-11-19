@@ -10,7 +10,7 @@ import PowerSettingsNewIcon from "@material-ui/icons/PowerSettingsNew";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Button from "@material-ui/core/Button";
 import { useAuth } from "providers/auth";
-import { blue, grey } from "@material-ui/core/colors";
+import { blue, grey, purple } from "@material-ui/core/colors";
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -21,16 +21,23 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     margin: theme.spacing(1, 1.5),
-    color:grey[800],
-fontSize:'17px',
+    color:'white',
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    fontSize: 15,
+   
   },
   appBar:{
 
     fontSize:'15px',
-    backgroundColor:blue[50],
-    color:grey[800],
+    backgroundColor:purple[999],
+    color:blue[800],
   },
-
+element:{
+  color:'white',
+  textDecoration:'none',
+fontSize:'25px',
+}
 }));
 
 export default function TopBar() {
@@ -85,7 +92,7 @@ export default function TopBar() {
               className={classes.link}
             >
               <IconButton>
-                <AccountCircleIcon />
+                <AccountCircleIcon   className={classes.element}/>
               </IconButton>
             </Link>
           )}
@@ -93,11 +100,11 @@ export default function TopBar() {
         {!!user ? (
           <IconButton onClick={signOut}   
           >
-            <PowerSettingsNewIcon className={classes.link} />
+            <PowerSettingsNewIcon    className={classes.element}/>
           </IconButton>
         ) : (
           <Button variant="contained" component={RouterLink} to="/signin" 
-          className={classes.link} >
+          >
            ورود
           </Button>
         )}

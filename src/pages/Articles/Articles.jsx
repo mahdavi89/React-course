@@ -70,33 +70,37 @@ const useStyles = makeStyles(theme => ({
 
 export default function Articles(props) {
   const classes = useStyles();
-  const { article, getAll } = useService();
-
+ // const { article, getAll } = useService();
+ const [article,setArticle]=useState()
   const { deleteArticle } = useService();
   //const [article, setArticle] = useState([]);
-  // let newUsersState = [];
+
+  let Articles = [];
 
   useEffect(() => {
-    getAll()
-    // ArticleService.getAll().on("value", snapshot => {
-    //   if (snapshot && snapshot.exists()) {
-    //     snapshot.forEach(data => {
-    //       const dataVal = data.val()
+  //  getAll()
+  Articles.splice(0, Articles.length)
+    ArticleService.getAll().on("value", snapshot => {
+      if (snapshot && snapshot.exists()) {
+        snapshot.forEach(data => {
+          const dataVal = data.val()
 
-    //       newUsersState.push({
-    //         key: data.key,
-    //         title: dataVal.title,
-    //         body: dataVal.body,
-    //         lastModifiedDate: dataVal.lastModifiedDate,
-    //         url: dataVal.url
-    //       })
+          Articles.push({
+            key: data.key,
+            title: dataVal.title,
+            body: dataVal.body,
+            lastModifiedDate: dataVal.lastModifiedDate,
+            url: dataVal.url
+          })
 
-    //     })
-    //     setArticle(newUsersState)
-    //   }
-    // })
+        })
+        setArticle(Articles)
+      }
+    })
 
-  }, [])
+  }, []);
+
+
   console.log('article', article)
   return (
 

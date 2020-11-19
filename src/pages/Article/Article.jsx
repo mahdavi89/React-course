@@ -64,21 +64,21 @@ export default function Article(props) {
     const classes = useStyles();
     const param = useParams();
     const [article, setArticle] = useState([]);
-    let newUsersState = [];
+    let post = [];
 
     useEffect(() => {
-       
+        post.splice(0, post.length)
           ArticleService.getAll().child(param.id).on("value",snapshot=>{
        
              const dataVal=snapshot.val()
-             newUsersState.push({
+             post.push({
                                     key: snapshot.key,
                                     title: dataVal.title,
                                     body: dataVal.body,
                                     lastModifiedDate: dataVal.lastModifiedDate,
                                     url: dataVal.url
                                 })
-              setArticle(newUsersState)
+              setArticle(post)
           })
 
 

@@ -28,52 +28,72 @@ const useStyles = makeStyles((theme) => ({
     classImage:{
         width:'200px',
         height:'200px'
-    }
+    },
+    form:{
+      position:"relative"
+    },
 }));
 
 export default function Edit() {
-    const { register, errors, reset, handleSubmit, control,setValue,getValues } = useForm();
+    const { register, errors, handleSubmit, control } = useForm();
     const classes = useStyles();
     const param = useParams();
-    const [fileVal, setFileVal] = useState([]);
     const[file,setFile]=useState();
-    const[flag,setFlag]=useState(true)
+    const[flag,setFlag]=useState(true);
+   const [post, setPost] = useState();
    
-    const{update,getImage,getChild,post,loading}=useService();
-const key=param.id;
+  const{update,loading}=useService();
 
 
 
 
 
     useEffect(() => {
-  
-        getChild(param.id)
+  let childArticle=[]
+     
+        ArticleService.getAll().child(param.id).on("value", snapshot => {
+          if (snapshot && snapshot.exists()) {
+          const dataVal = snapshot.val()
+          childArticle.push({
+              key: snapshot.key,
+              title: dataVal.title,
+              body: dataVal.body,
+              lastModifiedDate: dataVal.lastModifiedDate,
+              url: dataVal.url
+          })
+     
+        setPost(childArticle)
+        }
+      
+      })
 
-    }, [])
+    }, [param.id])
 
-    let card = post[0];
     
     const handleChangeImg=e=>{
        setFlag(false)
-      //  card.url ='';
         setFile(URL.createObjectURL(e.target.files[0]))
-    }
+    };
     const onSubmit = article => {
-        console.log('post0',post[0])
-        console.log('articleعحیشفث',article)
-        update(article,post[0])
+        
+      
+          update(article,post[0])
+       
+      
+       
+      
     };
 
-   // if(card){setLoading(false)}
-    return (card ?(
-        <form onSubmit={handleSubmit(onSubmit)}>
+  
+    return (post?(
+        <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+                   { loading&& <Loading/>}
             <Grid container spacing={2} style={{ marginTop: 16 }}>
                 <Grid item xs={12}>
                     <TextField
                         name="title"
                         label="Title"
-                        defaultValue={card&&card.title?card.title:''}
+                        defaultValue={post[0].title}
                         variant="outlined"
                         fullWidth
                         inputRef={register({
@@ -93,7 +113,7 @@ const key=param.id;
                         as={<TextEditor />}
                         name="body"
                         control={control}
-                        defaultValue={card.body}
+                        defaultValue={post[0].body}
                         error={!!errors.body}
                         helperText={!!errors.body && errors.body.message}
                         rules={{ required: true }}
@@ -110,7 +130,7 @@ const key=param.id;
                             id="contained-button-file"
                             type="file"
                             name='image'
-                            ref={register({ required: 'image is required' })}
+                            ref={register()}
                             onChange={handleChangeImg}
                              
                         />
@@ -121,7 +141,7 @@ const key=param.id;
                         </label>
                     </Grid>
                     <Grid item xs={6}>
-                      <img src={flag?card.url:file} className={classes.classImage} />
+                      <img src={flag?post[0].url:file} className={classes.classImage} />
                     </Grid>
 
                 </Grid>
